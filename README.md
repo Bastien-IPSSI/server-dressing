@@ -1,19 +1,20 @@
 # server-dressing
 
-Backend Node.js + TypeScript avec Fastify et Prisma (PostgreSQL).
+Backend Node.js + TypeScript avec Fastify et Prisma (PostgreSQL via Supabase).
 
 ## Prérequis
 
 - Node.js 22+
-- Une base PostgreSQL accessible
+- Un projet Supabase (Project Settings > Database > Connection string)
 
 ## Installation
 
 ```bash
 npm install
 cp .env.example .env
-# renseigner DATABASE_URL dans .env
 ```
+
+Renseigner dans `.env` les infos de connexion Supabase (bouton **Connect** sur le dashboard du projet, ou Project Settings > Database) : `SUPABASE_DB_HOST`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `SUPABASE_DB_NAME`.
 
 ## Développement
 
