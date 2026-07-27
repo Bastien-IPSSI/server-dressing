@@ -22,18 +22,36 @@ Renseigner dans `.env` les infos de connexion Supabase (bouton **Connect** sur l
 npm run dev
 ```
 
-## Migrations Prisma
-
-```bash
-npm run prisma:migrate         # crée et applique une migration en dev
-npm run prisma:migrate:deploy  # applique les migrations (prod/CI)
-npm run prisma:generate        # régénère le client Prisma
-npm run prisma:studio          # explorer la base de données
-```
-
 ## Build & production
 
 ```bash
 npm run build
 npm start
 ```
+
+## Docker
+
+Prérequis : Docker Desktop lancé, et un `.env` rempli (voir Installation) — il n'est jamais copié dans l'image, juste monté au runtime via `env_file`.
+
+### Lancer le serveur
+
+```bash
+docker compose up -d --build
+```
+
+Le serveur écoute sur `http://localhost:3000` (ou le port défini par `PORT` dans `.env`). Vérifier avec `curl http://localhost:3000/health`.
+
+```bash
+docker compose logs -f api   # suivre les logs
+docker compose down          # arrêter
+```
+
+### Migrations (optionnel)
+
+Les migrations ne sont **pas** appliquées automatiquement au démarrage du conteneur `api` (pour éviter d'exécuter des migrations concurrentes contre la base Supabase partagée à chaque redémarrage). Pour les appliquer manuellement :
+
+```bash
+docker compose run --rm migrate
+```
+
+Ce service ponctuel exécute `prisma migrate deploy` contre la base configurée dans `.env`, sans lancer le serveur.
