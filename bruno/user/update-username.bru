@@ -1,0 +1,32 @@
+meta {
+  name: Update Username
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/user/username
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "username": "nouveau_username"
+  }
+}
+
+docs {
+  Met à jour uniquement le nom d'utilisateur de l'utilisateur authentifié.
+
+  ### Body
+  - `username` (string, requis, 1 à 100 caractères)
+
+  ### Réponses
+  - `200` — l'utilisateur mis à jour
+  - `409` — le nom d'utilisateur est déjà pris (`USERNAME_TAKEN`)
+}

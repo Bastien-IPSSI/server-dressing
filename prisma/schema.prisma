@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id            String   @id @db.VarChar(255)
-  name          String   @db.VarChar(100)
+  name          String   @unique(map: "users_name_key") @db.VarChar(100)
   email         String   @unique @db.VarChar(255)
   emailVerified Boolean  @default(false) @map("email_verified")
   image         String?

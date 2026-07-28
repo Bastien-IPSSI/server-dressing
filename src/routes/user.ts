@@ -1,10 +1,15 @@
 import { FastifyInstance } from "fastify";
+import { Prisma } from "../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
 import { authenticate } from "../plugins/authenticate.js";
 import type { UserModel } from "../generated/prisma/models/User.js";
 
 interface UpdateAvatarBody {
   image: string;
+}
+
+interface UpdateUsernameBody {
+  username: string;
 }
 
 function serializeUser(user: UserModel) {
@@ -33,10 +38,24 @@ const userSchema = {
 
 const errorSchema = {
   type: "object",
+  required: ["error"],
   properties: {
     error: { type: "string" },
   },
 };
+
+const usernameConflictSchema = {
+  type: "object",
+  required: ["error", "code"],
+  properties: {
+    error: { type: "string" },
+    code: { type: "string", const: "USERNAME_TAKEN" },
+  },
+};
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
+}
 
 export async function userRoutes(app: FastifyInstance) {
   app.addHook("preHandler", authenticate);
@@ -92,6 +111,55 @@ export async function userRoutes(app: FastifyInstance) {
       });
 
       return reply.send(serializeUser(user));
+    },
+  );
+
+  app.patch<{ Body: UpdateUsernameBody }>(
+    "/username",
+    {
+      schema: {
+        tags: ["User"],
+        summary: "Mettre à jour le nom d'utilisateur de l'utilisateur connecté",
+        body: {
+          type: "object",
+          additionalProperties: false,
+          required: ["username"],
+          properties: {
+            username: { type: "string", minLength: 1, maxLength: 100 },
+          },
+        },
+        response: {
+          200: userSchema,
+          400: errorSchema,
+          401: errorSchema,
+          409: usernameConflictSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const username = request.body.username.trim();
+
+      if (!username) {
+        return reply.code(400).send({ error: "Le nom d'utilisateur est requis" });
+      }
+
+      try {
+        const user = await prisma.user.update({
+          where: { id: request.userId },
+          data: { name: username },
+        });
+
+        return reply.send(serializeUser(user));
+      } catch (error) {
+        if (isUniqueConstraintError(error)) {
+          return reply.code(409).send({
+            error: "Ce nom d'utilisateur est déjà pris",
+            code: "USERNAME_TAKEN",
+          });
+        }
+
+        throw error;
+      }
     },
   );
 }
