@@ -17,6 +17,8 @@ const SEED_AVATAR_URL =
 
 const TEMPLATES_BASE_URL =
   "https://rwxitzrxvlmawempmwue.supabase.co/storage/v1/object/public/public-assets/templates";
+const VIGNETTES_BASE_URL =
+  "https://rwxitzrxvlmawempmwue.supabase.co/storage/v1/object/public/public-assets/vignettes";
 
 interface ClothingTemplate {
   key: string;
@@ -130,7 +132,6 @@ async function main() {
 
   const itemsByKey = new Map<string, bigint>();
   for (const template of CLOTHING_TEMPLATES) {
-    const imageUrl = `${TEMPLATES_BASE_URL}/${template.file}`;
     const item = await prisma.clothingItem.create({
       data: {
         userId: user.id,
@@ -140,8 +141,8 @@ async function main() {
         material: template.material,
         season: template.season,
         style: template.style,
-        imageAvatarUrl: imageUrl,
-        imageDressingUrl: imageUrl,
+        imageAvatarUrl: `${TEMPLATES_BASE_URL}/${template.file}`,
+        imageDressingUrl: `${VIGNETTES_BASE_URL}/${template.file}`,
       },
     });
     itemsByKey.set(template.key, item.id);
