@@ -101,6 +101,30 @@ const idParamSchema = {
 export async function clothingRoutes(app: FastifyInstance) {
   app.addHook("preHandler", authenticate);
 
+  app.get(
+    "/",
+    {
+      schema: {
+        tags: ["Clothing"],
+        summary: "Lister les vêtements de l'utilisateur",
+        response: {
+          200: {
+            type: "array",
+            items: clothingItemSchema,
+          },
+        },
+      },
+    },
+    async (request) => {
+      const items = await prisma.clothingItem.findMany({
+        where: { userId: request.userId },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return items.map(serializeClothingItem);
+    },
+  );
+
   app.post<{ Body: CreateClothingBody }>(
     "/",
     {
