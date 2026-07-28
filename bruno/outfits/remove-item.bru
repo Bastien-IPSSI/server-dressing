@@ -1,0 +1,32 @@
+meta {
+  name: Remove Item
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/outfits/:id/items/:clothingItemId
+  body: none
+  auth: bearer
+}
+
+params:path {
+  id: 1
+  clothingItemId: 3
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+docs {
+  Retire l'association entre un vêtement et une tenue, toutes deux appartenant à l'utilisateur authentifié.
+
+  ### Params
+  - `id` (string, requis) — id de la tenue
+  - `clothingItemId` (string, requis)
+
+  ### Réponses
+  - `204` — association supprimée
+  - `404` — tenue ou association introuvable
+}

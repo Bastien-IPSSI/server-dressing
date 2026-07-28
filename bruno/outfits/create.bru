@@ -1,0 +1,40 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/outfits
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+body:json {
+  {
+    "name": "Tenue de bureau",
+    "isFavorite": false,
+    "clothingItemIds": ["3", "4"]
+  }
+}
+
+docs {
+  Crée une tenue pour l'utilisateur authentifié, avec éventuellement des vêtements déjà associés.
+  
+  ### Body
+  - `name` (string, optionnel, max. 120 caractères)
+  - `isFavorite` (boolean, optionnel)
+  - `clothingItemIds` (array de string, optionnel) — vêtements à associer immédiatement, doivent appartenir à l'utilisateur
+  
+  ### Réponses
+  - `201` — la tenue créée avec ses vêtements associés
+  - `400` — un ou plusieurs vêtements sont introuvables
+}

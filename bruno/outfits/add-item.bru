@@ -1,0 +1,44 @@
+meta {
+  name: Add Item
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/outfits/:id/items
+  body: json
+  auth: bearer
+}
+
+params:path {
+  id: 1
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+body:json {
+  {
+    "clothingItemId": "3"
+  }
+}
+
+docs {
+  Associe un vêtement à une tenue, toutes deux appartenant à l'utilisateur authentifié.
+  
+  ### Params
+  - `id` (string, requis) — id de la tenue
+  
+  ### Body
+  - `clothingItemId` (string, requis)
+  
+  ### Réponses
+  - `201` — l'association créée
+  - `404` — tenue ou vêtement introuvable
+  - `409` — ce vêtement est déjà associé à la tenue
+}

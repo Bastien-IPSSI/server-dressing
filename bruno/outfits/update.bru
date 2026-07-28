@@ -1,0 +1,45 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/outfits/:id
+  body: json
+  auth: bearer
+}
+
+params:path {
+  id: 1
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+body:json {
+  {
+    "name": "Tenue de boulot",
+    "isFavorite": false
+  }
+}
+
+docs {
+  Modifie une tenue appartenant à l'utilisateur authentifié.
+  
+  ### Params
+  - `id` (string, requis)
+  
+  ### Body (tous optionnels)
+  - `name` (string ou null, max. 120 caractères)
+  - `isFavorite` (boolean)
+  
+  ### Réponses
+  - `200` — la tenue modifiée
+  - `404` — tenue introuvable
+}

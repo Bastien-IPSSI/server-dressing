@@ -30,7 +30,7 @@ interface ClothingParams {
   id: string;
 }
 
-function serializeClothingItem(item: ClothingItemModel) {
+export function serializeClothingItem(item: ClothingItemModel) {
   return {
     id: item.id.toString(),
     name: item.name,
@@ -44,7 +44,7 @@ function serializeClothingItem(item: ClothingItemModel) {
   };
 }
 
-const clothingItemSchema = {
+export const clothingItemSchema = {
   type: "object",
   properties: {
     id: { type: "string" },
