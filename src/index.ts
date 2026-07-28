@@ -1,5 +1,6 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
@@ -8,6 +9,11 @@ import { clothingRoutes } from "./routes/clothing";
 import { outfitRoutes } from "./routes/outfits";
 
 const app = Fastify({ logger: true });
+
+app.register(cors, {
+  origin: process.env.CORS_ORIGIN?.split(",") ?? true,
+  credentials: true,
+});
 
 app.register(swagger, {
   openapi: {
