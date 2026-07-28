@@ -7,7 +7,7 @@ meta {
 post {
   url: {{baseUrl}}/outfits/:id/items
   body: json
-  auth: bearer
+  auth: none
 }
 
 params:path {
@@ -16,10 +16,6 @@ params:path {
 
 headers {
   Content-Type: application/json
-}
-
-auth:bearer {
-  token: {{token}}
 }
 
 body:json {

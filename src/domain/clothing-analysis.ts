@@ -4,7 +4,7 @@ import {
   ClothingMaterial,
   ClothingSeason,
   ClothingStyle,
-} from "../generated/prisma/enums";
+} from "../generated/prisma/enums.js";
 
 // Prisma is the server-side source of truth for both persistence and Gemini.
 export const CLOTHING_CATEGORIES = Object.values(ClothingCategory);

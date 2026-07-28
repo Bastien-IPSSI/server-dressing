@@ -3,7 +3,7 @@ import {
   ClothingAnalysis,
   clothingAnalysisJsonSchema,
   parseClothingAnalysis,
-} from "../domain/clothing-analysis";
+} from "../domain/clothing-analysis.js";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-lite";
 

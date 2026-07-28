@@ -1,84 +1,70 @@
 # server-dressing
 
-Backend Node.js + TypeScript avec Fastify et Prisma (PostgreSQL via Supabase).
-
-## Prérequis
-
-- Node.js 22+
-- Un projet Supabase (Project Settings > Database > Connection string)
+Backend Node.js + TypeScript avec Fastify, Prisma, PostgreSQL/Supabase et Better Auth.
 
 ## Installation
+
+Prérequis : Node.js 22+ et un projet Supabase.
 
 ```bash
 npm install
 cp .env.example .env
-```
-
-Renseigner dans `.env` :
-
-- les informations de connexion Supabase (bouton **Connect** sur le dashboard du projet, ou Project Settings > Database) : `SUPABASE_DB_HOST`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `SUPABASE_DB_NAME` ;
-- `GEMINI_API_KEY`, créée dans [Google AI Studio](https://aistudio.google.com/apikey) ;
-- éventuellement `GEMINI_MODEL` pour remplacer `gemini-3.1-flash-lite` ;
-- `CORS_ORIGINS`, avec les origines Expo Web autorisées séparées par des virgules. En développement, toutes les origines sont acceptées si cette variable est absente. En production, seuls `localhost` et `127.0.0.1` sur les ports Expo Web usuels sont autorisés par défaut ; le domaine web déployé doit être explicitement configuré.
-
-## Développement
-
-```bash
+npm run prisma:generate
+npm run prisma:migrate:deploy
 npm run dev
 ```
 
-## Analyse d'un vêtement
+La configuration minimale de `.env` comprend :
 
-`POST /clothing/analyze` accepte une image JPEG, PNG, WebP, HEIC ou HEIF dans le champ multipart `image` (8 Mo maximum). La réponse contient uniquement des valeurs canoniques issues des ENUM autorisés :
+- les variables `SUPABASE_DB_*` ;
+- `BETTER_AUTH_SECRET`, secret aléatoire d'au moins 32 caractères ;
+- `BETTER_AUTH_URL`, URL publique du serveur, par exemple `http://localhost:3000` ;
+- `APP_SCHEME=mogora`, identique au scheme Expo ;
+- `CORS_ORIGINS`, liste d'origines web séparées par des virgules ;
+- `GEMINI_API_KEY` et éventuellement `GEMINI_MODEL`.
 
-Ouvrir `/clothing/analyze` directement dans un navigateur envoie un `GET` et retourne donc une erreur. L'analyse doit être déclenchée par le client avec une requête `POST multipart/form-data`.
+Google est activé uniquement lorsque `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` sont tous les deux définis. L'URI de redirection locale à enregistrer dans Google Cloud est :
 
-```json
-{
-  "category": "TOP",
-  "color": "BLUE",
-  "material": "COTTON",
-  "season": "SUMMER",
-  "style": "CASUAL"
-}
+```text
+http://localhost:3000/api/auth/callback/google
 ```
 
-La clé Gemini reste exclusivement dans le backend. La matière vaut `UNKNOWN` lorsqu'elle ne peut pas être déterminée de manière raisonnable depuis la photo.
+En développement, Fastify accepte toutes les origines CORS si `CORS_ORIGINS` est absente. En production, aucune origine web n'est acceptée par défaut : il faut renseigner explicitement les domaines déployés. Les requêtes natives Expo utilisent le cookie de session conservé dans SecureStore par le plugin Better Auth.
 
-Les mêmes ENUM Prisma sont utilisés par l'analyse Gemini et par le CRUD des vêtements. Ils constituent la source de vérité pour `category`, `color`, `material`, `season` et `style`, ce qui évite les variantes de casse ou de libellé en base.
+## Authentification
 
-La migration `20260728130000_unify_clothing_attributes` conserve les anciennes catégories, saisons et styles. Lors de la conversion de l'ancienne colonne libre `color`, toute valeur non reconnue est transformée en `UNKNOWN` plutôt que de faire échouer la migration.
+Better Auth est monté sous `/api/auth/*`. Les principaux endpoints sont :
 
-## Build & production
+- `POST /api/auth/sign-up/email` ;
+- `POST /api/auth/sign-in/email` ;
+- `POST /api/auth/sign-in/social` ;
+- `GET /api/auth/get-session` ;
+- `POST /api/auth/sign-out`.
+
+Les routes métier protégées valident le cookie avec `auth.api.getSession`. Il n'existe plus de token Bearer, de refresh token applicatif ni de secret JWT.
+
+La migration `20260728170000_replace_jwt_with_better_auth` est volontairement destructive : elle supprime les anciens comptes et toutes les données qui leur appartiennent, convertit les clés utilisateur en chaînes, puis crée les tables Better Auth `sessions`, `accounts` et `verifications`. Examiner le SQL avant de lancer `prisma migrate deploy`.
+
+La collection Bruno conserve automatiquement le cookie après `Register` ou `Login`; exécuter l'une de ces requêtes avant les endpoints protégés.
+
+## Analyse d'un vêtement
+
+`POST /clothing/analyze` accepte une image JPEG, PNG, WebP, HEIC ou HEIF dans le champ multipart `image` (8 Mo maximum). La réponse utilise exclusivement les ENUM Prisma canoniques pour `category`, `color`, `material`, `season` et `style`. La clé Gemini reste exclusivement dans le backend.
+
+## Build et production
 
 ```bash
 npm run build
 npm start
 ```
 
+Le serveur expose `/health` et la documentation Fastify sous `/docs`.
+
 ## Docker
-
-Prérequis : Docker Desktop lancé, et un `.env` rempli (voir Installation) — il n'est jamais copié dans l'image, juste monté au runtime via `env_file`.
-
-### Lancer le serveur
 
 ```bash
 docker compose up -d --build
-```
-
-Le serveur écoute sur `http://localhost:3000` (ou le port défini par `PORT` dans `.env`). Vérifier avec `curl http://localhost:3000/health`.
-
-```bash
-docker compose logs -f api   # suivre les logs
-docker compose down          # arrêter
-```
-
-### Migrations (optionnel)
-
-Les migrations ne sont **pas** appliquées automatiquement au démarrage du conteneur `api` (pour éviter d'exécuter des migrations concurrentes contre la base Supabase partagée à chaque redémarrage). Pour les appliquer manuellement :
-
-```bash
 docker compose run --rm migrate
 ```
 
-Ce service ponctuel exécute `prisma migrate deploy` contre la base configurée dans `.env`, sans lancer le serveur.
+Les migrations ne sont pas appliquées automatiquement au démarrage du conteneur API. Le service ponctuel `migrate` exécute explicitement `prisma migrate deploy` avec le fichier `.env` local, qui n'est jamais copié dans l'image.

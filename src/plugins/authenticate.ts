@@ -1,24 +1,29 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { verifyToken } from "../lib/jwt";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../lib/auth.js";
+
+type AuthSession = typeof auth.$Infer.Session;
 
 declare module "fastify" {
   interface FastifyRequest {
-    userId: bigint;
+    authSession: AuthSession;
+    userId: string;
   }
 }
 
 export async function authenticate(request: FastifyRequest, reply: FastifyReply) {
-  const header = request.headers.authorization;
-  const token = header?.startsWith("Bearer ") ? header.slice(7) : undefined;
-
-  if (!token) {
-    return reply.code(401).send({ error: "Authentification requise" });
-  }
-
   try {
-    const payload = verifyToken(token);
-    request.userId = BigInt(payload.sub);
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(request.headers),
+    });
+
+    if (!session) {
+      return reply.code(401).send({ error: "Authentification requise" });
+    }
+
+    request.authSession = session;
+    request.userId = session.user.id;
   } catch {
-    return reply.code(401).send({ error: "Token invalide ou expiré" });
+    return reply.code(401).send({ error: "Session invalide ou expirée" });
   }
 }

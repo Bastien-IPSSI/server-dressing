@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { prisma } from "../lib/prisma";
-import { authenticate } from "../plugins/authenticate";
-import { clothingItemSchema, serializeClothingItem } from "./clothing";
-import type { CurrentOutfitSelectionModel } from "../generated/prisma/models/CurrentOutfitSelection";
-import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem";
+import { prisma } from "../lib/prisma.js";
+import { authenticate } from "../plugins/authenticate.js";
+import { clothingItemSchema, serializeClothingItem } from "./clothing.js";
+import type { CurrentOutfitSelectionModel } from "../generated/prisma/models/CurrentOutfitSelection.js";
+import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem.js";
 
 interface ReplaceSelectionBody {
   clothingItemIds: string[];

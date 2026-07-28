@@ -1,10 +1,10 @@
 import { FastifyInstance } from "fastify";
-import { prisma } from "../lib/prisma";
-import { authenticate } from "../plugins/authenticate";
-import { clothingItemSchema, serializeClothingItem } from "./clothing";
-import type { OutfitModel } from "../generated/prisma/models/Outfit";
-import type { OutfitItemModel } from "../generated/prisma/models/OutfitItem";
-import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem";
+import { prisma } from "../lib/prisma.js";
+import { authenticate } from "../plugins/authenticate.js";
+import { clothingItemSchema, serializeClothingItem } from "./clothing.js";
+import type { OutfitModel } from "../generated/prisma/models/Outfit.js";
+import type { OutfitItemModel } from "../generated/prisma/models/OutfitItem.js";
+import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem.js";
 
 interface CreateOutfitBody {
   name?: string;

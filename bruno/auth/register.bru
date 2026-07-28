@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/auth/register
+  url: {{baseUrl}}/api/auth/sign-up/email
   body: json
   auth: none
 }
@@ -16,28 +16,13 @@ headers {
 
 body:json {
   {
+    "name": "Mon prénom",
     "email": "test@example.com",
-    "password": "password123",
-    "username": "monpseudo"
-  }
-}
-
-script:post-response {
-  if (res.body && res.body.token) {
-    bru.setEnvVar("token", res.body.token);
+    "password": "password123"
   }
 }
 
 docs {
-  Crée un utilisateur et renvoie un token JWT.
-
-  ### Body
-  - `email` (string, requis)
-  - `password` (string, requis, min. 8 caractères)
-  - `username` (string, optionnel)
-
-  ### Réponses
-  - `201` — `{ "user": { "id", "email", "username" }, "token": "..." }`
-  - `400` — email/mot de passe manquant ou mot de passe trop court
-  - `409` — un compte existe déjà avec cet email
+  Crée un utilisateur avec Better Auth et ouvre une session par cookie.
+  Bruno conserve automatiquement le cookie pour les requêtes protégées suivantes.
 }
