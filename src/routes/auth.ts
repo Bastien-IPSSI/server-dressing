@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma";
 import { signToken } from "../lib/jwt";
+import { verifyGoogleIdToken } from "../lib/google";
 
 interface RegisterBody {
   email: string;
@@ -12,6 +13,10 @@ interface RegisterBody {
 interface LoginBody {
   email: string;
   password: string;
+}
+
+interface GoogleBody {
+  idToken: string;
 }
 
 function serializeUser(user: { id: bigint; email: string; username: string | null }) {
@@ -120,13 +125,73 @@ export async function authRoutes(app: FastifyInstance) {
       const { email, password } = request.body;
 
       const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) {
+      if (!user || !user.passwordHash) {
         return reply.code(401).send({ error: "Identifiants invalides" });
       }
 
       const isValid = await bcrypt.compare(password, user.passwordHash);
       if (!isValid) {
         return reply.code(401).send({ error: "Identifiants invalides" });
+      }
+
+      const token = signToken(user.id);
+      return reply.send({ user: serializeUser(user), token });
+    },
+  );
+
+  app.post<{ Body: GoogleBody }>(
+    "/google",
+    {
+      schema: {
+        tags: ["Auth"],
+        summary: "Se connecter / s'inscrire avec Google",
+        body: {
+          type: "object",
+          required: ["idToken"],
+          properties: {
+            idToken: { type: "string" },
+          },
+        },
+        response: {
+          200: authResponseSchema,
+          400: validationErrorSchema,
+          401: errorSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { idToken } = request.body;
+
+      let profile;
+      try {
+        profile = await verifyGoogleIdToken(idToken);
+      } catch {
+        return reply.code(401).send({ error: "Token Google invalide" });
+      }
+
+      // Compte déjà lié à ce Google ID
+      let user = await prisma.user.findUnique({ where: { googleId: profile.googleId } });
+
+      // Compte existant créé via email/mot de passe -> on le lie à Google
+      if (!user) {
+        const existing = await prisma.user.findUnique({ where: { email: profile.email } });
+        if (existing) {
+          user = await prisma.user.update({
+            where: { id: existing.id },
+            data: { googleId: profile.googleId },
+          });
+        }
+      }
+
+      // Aucun compte -> inscription
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email: profile.email,
+            googleId: profile.googleId,
+            username: profile.username,
+          },
+        });
       }
 
       const token = signToken(user.id);

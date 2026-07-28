@@ -1,0 +1,39 @@
+meta {
+  name: Google
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/google
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "idToken": "eyJhbGciOi..."
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.token) {
+    bru.setEnvVar("token", res.body.token);
+  }
+}
+
+docs {
+  Connecte ou inscrit un utilisateur via un ID token Google (obtenu côté front avec Google Identity Services) et renvoie un token JWT maison.
+
+  ### Body
+  - `idToken` (string, requis) — ID token renvoyé par Google au front
+
+  ### Réponses
+  - `200` — `{ "user": { "id", "email", "username" }, "token": "..." }`
+  - `400` — idToken manquant
+  - `401` — token Google invalide/expiré ou email non vérifié
+}
