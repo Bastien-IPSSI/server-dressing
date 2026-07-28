@@ -7,7 +7,6 @@ import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
 import { authRoutes } from "./routes/auth";
 import { clothingAnalysisRoutes } from "./routes/clothing-analysis";
-import { clothingAnalysisRoutes } from "./routes/clothing-analysis";
 import { clothingRoutes } from "./routes/clothing";
 import { outfitRoutes } from "./routes/outfits";
 import { currentOutfitSelectionRoutes } from "./routes/currentOutfitSelection";
@@ -22,11 +21,6 @@ const app = Fastify({
       },
     ],
   },
-});
-
-app.register(cors, {
-  origin: process.env.CORS_ORIGIN?.split(",") ?? true,
-  credentials: true,
 });
 
 const configuredCorsOrigins = process.env.CORS_ORIGINS?.split(",")
@@ -54,15 +48,6 @@ app.register(swagger, {
 });
 app.register(swaggerUi, {
   routePrefix: "/docs",
-});
-app.register(cors, {
-  origin: corsOrigin,
-  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-});
-app.register(multipart, {
-  attachFieldsToBody: true,
-  throwFileSizeLimit: true,
 });
 app.register(cors, {
   origin: corsOrigin,
