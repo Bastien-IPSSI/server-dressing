@@ -14,13 +14,33 @@ npm install
 cp .env.example .env
 ```
 
-Renseigner dans `.env` les infos de connexion Supabase (bouton **Connect** sur le dashboard du projet, ou Project Settings > Database) : `SUPABASE_DB_HOST`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `SUPABASE_DB_NAME`.
+Renseigner dans `.env` :
+
+- les informations de connexion Supabase (bouton **Connect** sur le dashboard du projet, ou Project Settings > Database) : `SUPABASE_DB_HOST`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `SUPABASE_DB_NAME` ;
+- `GEMINI_API_KEY`, créée dans [Google AI Studio](https://aistudio.google.com/apikey) ;
+- éventuellement `GEMINI_MODEL` pour remplacer `gemini-3.1-flash-lite`.
 
 ## Développement
 
 ```bash
 npm run dev
 ```
+
+## Analyse d'un vêtement
+
+`POST /clothing/analyze` accepte une image JPEG, PNG, WebP, HEIC ou HEIF dans le champ multipart `image` (8 Mo maximum). La réponse contient uniquement des valeurs canoniques issues des ENUM autorisés :
+
+```json
+{
+  "category": "TOP",
+  "color": "BLUE",
+  "material": "COTTON",
+  "season": "SUMMER",
+  "style": "CASUAL"
+}
+```
+
+La clé Gemini reste exclusivement dans le backend. La matière vaut `UNKNOWN` lorsqu'elle ne peut pas être déterminée de manière raisonnable depuis la photo.
 
 ## Build & production
 

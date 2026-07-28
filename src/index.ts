@@ -1,13 +1,25 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import multipart, { ajvFilePlugin } from "@fastify/multipart";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
 import { authRoutes } from "./routes/auth";
+import { clothingAnalysisRoutes } from "./routes/clothing-analysis";
 import { clothingRoutes } from "./routes/clothing";
 import { outfitRoutes } from "./routes/outfits";
 
-const app = Fastify({ logger: true });
+const app = Fastify({
+  logger: true,
+  ajv: {
+    plugins: [
+      (ajv) => {
+        ajvFilePlugin(ajv);
+        return ajv;
+      },
+    ],
+  },
+});
 
 app.register(swagger, {
   openapi: {
@@ -20,6 +32,10 @@ app.register(swagger, {
 app.register(swaggerUi, {
   routePrefix: "/docs",
 });
+app.register(multipart, {
+  attachFieldsToBody: true,
+  throwFileSizeLimit: true,
+});
 
 app.get("/health", async () => {
   return { status: "ok" };
@@ -28,6 +44,7 @@ app.get("/health", async () => {
 app.register(authRoutes, { prefix: "/auth" });
 app.register(clothingRoutes, { prefix: "/clothing" });
 app.register(outfitRoutes, { prefix: "/outfits" });
+app.register(clothingAnalysisRoutes, { prefix: "/clothing" });
 
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || "0.0.0.0";
