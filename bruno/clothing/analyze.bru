@@ -1,0 +1,23 @@
+meta {
+  name: Analyze clothing
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/clothing/analyze
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  ~image: @file(./sample-clothing.jpg)
+}
+
+docs {
+  Analyse le vêtement principal visible sur une photo.
+
+  Activez le champ `image` puis sélectionnez une image locale dans Bruno avant d'envoyer la requête.
+
+  Formats acceptés : JPEG, PNG, WebP, HEIC et HEIF. Taille maximale : 8 Mo.
+}

@@ -1,15 +1,27 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import multipart, { ajvFilePlugin } from "@fastify/multipart";
 import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
 import { authRoutes } from "./routes/auth";
+import { clothingAnalysisRoutes } from "./routes/clothing-analysis";
 import { clothingRoutes } from "./routes/clothing";
 import { outfitRoutes } from "./routes/outfits";
 import { currentOutfitSelectionRoutes } from "./routes/currentOutfitSelection";
 
-const app = Fastify({ logger: true });
+const app = Fastify({
+  logger: true,
+  ajv: {
+    plugins: [
+      (ajv) => {
+        ajvFilePlugin(ajv);
+        return ajv;
+      },
+    ],
+  },
+});
 
 app.register(cors, {
   origin: process.env.CORS_ORIGIN?.split(",") ?? true,
@@ -27,6 +39,10 @@ app.register(swagger, {
 app.register(swaggerUi, {
   routePrefix: "/docs",
 });
+app.register(multipart, {
+  attachFieldsToBody: true,
+  throwFileSizeLimit: true,
+});
 
 app.get("/health", async () => {
   return { status: "ok" };
@@ -35,6 +51,7 @@ app.get("/health", async () => {
 app.register(authRoutes, { prefix: "/auth" });
 app.register(clothingRoutes, { prefix: "/clothing" });
 app.register(outfitRoutes, { prefix: "/outfits" });
+app.register(clothingAnalysisRoutes, { prefix: "/clothing" });
 app.register(currentOutfitSelectionRoutes, { prefix: "/current-outfit-selection" });
 
 const port = Number(process.env.PORT) || 3000;
