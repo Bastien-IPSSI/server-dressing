@@ -1,0 +1,32 @@
+meta {
+  name: Replace
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/current-outfit-selection
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "clothingItemIds": ["3", "4"]
+  }
+}
+
+docs {
+  Remplace intégralement la sélection courante sur le mannequin de l'utilisateur authentifié.
+
+  ### Body
+  - `clothingItemIds` (array de string, requis) — un seul vêtement par catégorie ; tableau vide pour tout retirer
+
+  ### Réponses
+  - `200` — la nouvelle sélection
+  - `400` — un ou plusieurs vêtements sont introuvables, ou plusieurs vêtements de la même catégorie
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Get
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/user
+  body: none
+  auth: none
+}
+
+docs {
+  Récupère les informations de l'utilisateur authentifié (dont son avatar).
+
+  ### Réponses
+  - `200` — l'utilisateur
+  - `404` — utilisateur introuvable
+}

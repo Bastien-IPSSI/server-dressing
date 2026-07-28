@@ -1,0 +1,31 @@
+meta {
+  name: Update Avatar
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/user/avatar
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "image": "https://example.com/avatar.png"
+  }
+}
+
+docs {
+  Met à jour l'avatar de l'utilisateur authentifié.
+
+  ### Body
+  - `image` (string, requis) — URL du nouvel avatar
+
+  ### Réponses
+  - `200` — l'utilisateur mis à jour
+}

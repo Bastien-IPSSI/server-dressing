@@ -10,6 +10,7 @@ import { clothingAnalysisRoutes } from "./routes/clothing-analysis.js";
 import { clothingRoutes } from "./routes/clothing.js";
 import { outfitRoutes } from "./routes/outfits.js";
 import { currentOutfitSelectionRoutes } from "./routes/currentOutfitSelection.js";
+import { userRoutes } from "./routes/user.js";
 
 const app = Fastify({
   logger: true,
@@ -64,6 +65,7 @@ app.register(clothingRoutes, { prefix: "/clothing" });
 app.register(outfitRoutes, { prefix: "/outfits" });
 app.register(clothingAnalysisRoutes, { prefix: "/clothing" });
 app.register(currentOutfitSelectionRoutes, { prefix: "/current-outfit-selection" });
+app.register(userRoutes, { prefix: "/user" });
 
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || "0.0.0.0";
