@@ -2,11 +2,11 @@ import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import multipart, { ajvFilePlugin } from "@fastify/multipart";
-import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
 import { authRoutes } from "./routes/auth";
+import { clothingAnalysisRoutes } from "./routes/clothing-analysis";
 import { clothingAnalysisRoutes } from "./routes/clothing-analysis";
 import { clothingRoutes } from "./routes/clothing";
 import { outfitRoutes } from "./routes/outfits";
@@ -54,6 +54,15 @@ app.register(swagger, {
 });
 app.register(swaggerUi, {
   routePrefix: "/docs",
+});
+app.register(cors, {
+  origin: corsOrigin,
+  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
+app.register(multipart, {
+  attachFieldsToBody: true,
+  throwFileSizeLimit: true,
 });
 app.register(cors, {
   origin: corsOrigin,
