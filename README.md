@@ -18,7 +18,8 @@ Renseigner dans `.env` :
 
 - les informations de connexion Supabase (bouton **Connect** sur le dashboard du projet, ou Project Settings > Database) : `SUPABASE_DB_HOST`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `SUPABASE_DB_NAME` ;
 - `GEMINI_API_KEY`, créée dans [Google AI Studio](https://aistudio.google.com/apikey) ;
-- éventuellement `GEMINI_MODEL` pour remplacer `gemini-3.1-flash-lite`.
+- éventuellement `GEMINI_MODEL` pour remplacer `gemini-3.1-flash-lite` ;
+- `CORS_ORIGINS`, avec les origines Expo Web autorisées séparées par des virgules. En développement, toutes les origines sont acceptées si cette variable est absente. En production, seuls `localhost` et `127.0.0.1` sur les ports Expo Web usuels sont autorisés par défaut ; le domaine web déployé doit être explicitement configuré.
 
 ## Développement
 
@@ -29,6 +30,8 @@ npm run dev
 ## Analyse d'un vêtement
 
 `POST /clothing/analyze` accepte une image JPEG, PNG, WebP, HEIC ou HEIF dans le champ multipart `image` (8 Mo maximum). La réponse contient uniquement des valeurs canoniques issues des ENUM autorisés :
+
+Ouvrir `/clothing/analyze` directement dans un navigateur envoie un `GET` et retourne donc une erreur. L'analyse doit être déclenchée par le client avec une requête `POST multipart/form-data`.
 
 ```json
 {

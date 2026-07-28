@@ -1,5 +1,6 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import multipart, { ajvFilePlugin } from "@fastify/multipart";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
@@ -21,6 +22,21 @@ const app = Fastify({
   },
 });
 
+const configuredCorsOrigins = process.env.CORS_ORIGINS?.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const localWebOrigins = [
+  "http://localhost:8081",
+  "http://127.0.0.1:8081",
+  "http://localhost:19006",
+  "http://127.0.0.1:19006",
+];
+const corsOrigin = configuredCorsOrigins?.length
+  ? configuredCorsOrigins
+  : process.env.NODE_ENV === "production"
+    ? localWebOrigins
+    : true;
+
 app.register(swagger, {
   openapi: {
     info: {
@@ -31,6 +47,11 @@ app.register(swagger, {
 });
 app.register(swaggerUi, {
   routePrefix: "/docs",
+});
+app.register(cors, {
+  origin: corsOrigin,
+  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 });
 app.register(multipart, {
   attachFieldsToBody: true,
