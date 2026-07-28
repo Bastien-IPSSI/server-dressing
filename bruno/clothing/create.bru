@@ -1,0 +1,47 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/clothing
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+body:json {
+  {
+    "name": "T-shirt blanc",
+    "category": "TOP",
+    "color": "#000000",
+    "season": "SUMMER",
+    "style": "CASUAL",
+    "imageAvatarUrl": "https://example.com/avatar.png",
+    "imageDressingUrl": "https://example.com/dressing.png"
+  }
+}
+
+docs {
+  Ajoute un vêtement pour l'utilisateur authentifié.
+  
+  ### Body
+  - `name` (string, requis, max. 120 caractères)
+  - `category` (string, requis, enum)
+  - `color` (string, requis, max. 50 caractères)
+  - `season` (string, requis, enum)
+  - `style` (string, requis, enum)
+  - `imageAvatarUrl` (string, requis)
+  - `imageDressingUrl` (string, requis)
+  
+  ### Réponses
+  - `201` — le vêtement créé
+}

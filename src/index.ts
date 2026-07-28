@@ -4,6 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
 import { authRoutes } from "./routes/auth";
+import { clothingRoutes } from "./routes/clothing";
 
 const app = Fastify({ logger: true });
 
@@ -24,6 +25,7 @@ app.get("/health", async () => {
 });
 
 app.register(authRoutes, { prefix: "/auth" });
+app.register(clothingRoutes, { prefix: "/clothing" });
 
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || "0.0.0.0";

@@ -1,0 +1,30 @@
+meta {
+  name: Delete
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/clothing/:id
+  body: none
+  auth: bearer
+}
+
+params:path {
+  id: 2
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+docs {
+  Supprime un vêtement appartenant à l'utilisateur authentifié.
+  
+  ### Params
+  - `id` (string, requis)
+  
+  ### Réponses
+  - `204` — supprimé
+  - `404` — vêtement introuvable
+}

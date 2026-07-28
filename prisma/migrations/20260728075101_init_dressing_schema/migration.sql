@@ -7,6 +7,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- CreateEnum
+CREATE TYPE "clothing_category" AS ENUM ('TOP', 'BOTTOM', 'SHOES');
+
+-- CreateEnum
+CREATE TYPE "season" AS ENUM ('SPRING', 'AUTUMN', 'SUMMER', 'WINTER', 'SPRING_SUMMER', 'AUTUMN_WINTER', 'ALL');
+
+-- CreateEnum
+CREATE TYPE "clothing_style" AS ENUM ('CASUAL', 'SMART_CASUAL', 'FORMAL', 'STREETWEAR', 'SPORTY', 'CLASSIC');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" BIGSERIAL NOT NULL,
@@ -25,13 +34,13 @@ CREATE TABLE "users" (
 CREATE TABLE "clothing_items" (
     "id" BIGSERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
-    "name" VARCHAR(120),
-    "category" VARCHAR(50) NOT NULL,
-    "color" VARCHAR(50),
-    "season" VARCHAR(50),
-    "style" VARCHAR(50),
-    "image_avatar_url" TEXT,
-    "image_dressing_url" TEXT,
+    "name" VARCHAR(120) NOT NULL,
+    "category" "clothing_category" NOT NULL,
+    "color" VARCHAR(50) NOT NULL,
+    "season" "season" NOT NULL,
+    "style" "clothing_style" NOT NULL,
+    "image_avatar_url" TEXT NOT NULL,
+    "image_dressing_url" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "clothing_items_pkey" PRIMARY KEY ("id")

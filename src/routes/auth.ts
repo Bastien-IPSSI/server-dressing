@@ -1,14 +1,7 @@
 import { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { prisma } from "../lib/prisma";
-
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = "7d";
-
-if (!JWT_SECRET) {
-  throw new Error("Missing JWT_SECRET in .env");
-}
+import { signToken } from "../lib/jwt";
 
 interface RegisterBody {
   email: string;
@@ -19,12 +12,6 @@ interface RegisterBody {
 interface LoginBody {
   email: string;
   password: string;
-}
-
-function signToken(userId: bigint): string {
-  return jwt.sign({ sub: userId.toString() }, JWT_SECRET as string, {
-    expiresIn: JWT_EXPIRES_IN,
-  });
 }
 
 function serializeUser(user: { id: bigint; email: string; username: string | null }) {

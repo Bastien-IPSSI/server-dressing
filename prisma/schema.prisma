@@ -29,17 +29,48 @@ model User {
   @@map("users")
 }
 
+enum ClothingCategory {
+  TOP
+  BOTTOM
+  SHOES
+
+  @@map("clothing_category")
+}
+
+enum Season {
+  SPRING
+  AUTUMN
+  SUMMER
+  WINTER
+  SPRING_SUMMER
+  AUTUMN_WINTER
+  ALL
+
+  @@map("season")
+}
+
+enum ClothingStyle {
+  CASUAL // Décontracté
+  SMART_CASUAL // Chic décontracté
+  FORMAL // Habillé / Classe
+  STREETWEAR // Style urbain
+  SPORTY // Sportif
+  CLASSIC // Classique
+
+  @@map("clothing_style")
+}
+
 model ClothingItem {
-  id                 BigInt   @id @default(autoincrement())
-  userId             BigInt   @map("user_id")
-  name               String?  @db.VarChar(120)
-  category           String   @db.VarChar(50)
-  color              String?  @db.VarChar(50)
-  season             String?  @db.VarChar(50)
-  style              String?  @db.VarChar(50)
-  imageAvatarUrl     String?  @map("image_avatar_url")
-  imageDressingUrl   String?  @map("image_dressing_url")
-  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id                 BigInt           @id @default(autoincrement())
+  userId             BigInt           @map("user_id")
+  name               String           @db.VarChar(120)
+  category           ClothingCategory
+  color              String           @db.VarChar(50)
+  season             Season
+  style              ClothingStyle
+  imageAvatarUrl     String           @map("image_avatar_url")
+  imageDressingUrl   String           @map("image_dressing_url")
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
 
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   outfitItems OutfitItem[]

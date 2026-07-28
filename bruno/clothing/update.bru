@@ -1,0 +1,48 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/clothing/:id
+  body: json
+  auth: bearer
+}
+
+params:path {
+  id: 1
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+body:json {
+  {
+    "name": "T-shirt blanc",
+    "color": "#000000"
+  }
+}
+
+docs {
+  Modifie un vêtement appartenant à l'utilisateur authentifié.
+  
+  ### Params
+  - `id` (string, requis)
+  
+  ### Body (tous optionnels)
+  - `name` (string, max. 120 caractères)
+  - `category` (string, enum)
+  - `color` (string, max. 50 caractères)
+  - `season` (string, enum)
+  - `style` (string, enum)
+  
+  ### Réponses
+  - `200` — le vêtement modifié
+  - `404` — vêtement introuvable
+}
