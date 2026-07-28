@@ -1,83 +1,17 @@
-export const CLOTHING_CATEGORIES = [
-  "TOP",
-  "BOTTOM",
-  "DRESS",
-  "OUTERWEAR",
-  "SHOES",
-  "ACCESSORY",
-  "UNDERWEAR",
-  "SPORTSWEAR",
-  "OTHER",
-  "UNKNOWN",
-] as const;
+import {
+  ClothingCategory,
+  ClothingColor,
+  ClothingMaterial,
+  ClothingSeason,
+  ClothingStyle,
+} from "../generated/prisma/enums";
 
-export const CLOTHING_COLORS = [
-  "BLACK",
-  "WHITE",
-  "GRAY",
-  "BEIGE",
-  "BROWN",
-  "BLUE",
-  "NAVY_BLUE",
-  "GREEN",
-  "KHAKI",
-  "YELLOW",
-  "ORANGE",
-  "RED",
-  "PINK",
-  "PURPLE",
-  "MULTICOLOR",
-  "UNKNOWN",
-] as const;
-
-export const CLOTHING_MATERIALS = [
-  "COTTON",
-  "LINEN",
-  "WOOL",
-  "CASHMERE",
-  "SILK",
-  "LEATHER",
-  "SUEDE",
-  "DENIM",
-  "POLYESTER",
-  "NYLON",
-  "VISCOSE",
-  "ACRYLIC",
-  "ELASTANE",
-  "SYNTHETIC",
-  "MIXED",
-  "UNKNOWN",
-] as const;
-
-export const CLOTHING_SEASONS = [
-  "SPRING",
-  "SUMMER",
-  "AUTUMN",
-  "WINTER",
-  "ALL_SEASONS",
-  "UNKNOWN",
-] as const;
-
-export const CLOTHING_STYLES = [
-  "CASUAL",
-  "FORMAL",
-  "BUSINESS",
-  "SPORT",
-  "STREETWEAR",
-  "CHIC",
-  "BOHEMIAN",
-  "VINTAGE",
-  "MINIMALIST",
-  "PARTY",
-  "WORKWEAR",
-  "UNKNOWN",
-] as const;
-
-export type ClothingCategory = (typeof CLOTHING_CATEGORIES)[number];
-export type ClothingColor = (typeof CLOTHING_COLORS)[number];
-export type ClothingMaterial = (typeof CLOTHING_MATERIALS)[number];
-export type ClothingSeason = (typeof CLOTHING_SEASONS)[number];
-export type ClothingStyle = (typeof CLOTHING_STYLES)[number];
+// Prisma is the server-side source of truth for both persistence and Gemini.
+export const CLOTHING_CATEGORIES = Object.values(ClothingCategory);
+export const CLOTHING_COLORS = Object.values(ClothingColor);
+export const CLOTHING_MATERIALS = Object.values(ClothingMaterial);
+export const CLOTHING_SEASONS = Object.values(ClothingSeason);
+export const CLOTHING_STYLES = Object.values(ClothingStyle);
 
 export interface ClothingAnalysis {
   category: ClothingCategory;

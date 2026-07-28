@@ -15,14 +15,15 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+  token: {{token}}
 }
 
 body:json {
   {
     "name": "T-shirt blanc",
     "category": "TOP",
-    "color": "#000000",
+    "color": "WHITE",
+    "material": "COTTON",
     "season": "SUMMER",
     "style": "CASUAL",
     "imageAvatarUrl": "https://example.com/avatar.png",
@@ -36,7 +37,8 @@ docs {
   ### Body
   - `name` (string, requis, max. 120 caractères)
   - `category` (string, requis, enum)
-  - `color` (string, requis, max. 50 caractères)
+  - `color` (string, requis, enum)
+  - `material` (string, requis, enum)
   - `season` (string, requis, enum)
   - `style` (string, requis, enum)
   - `imageAvatarUrl` (string, requis)
