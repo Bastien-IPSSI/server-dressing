@@ -51,6 +51,12 @@ La collection Bruno conserve automatiquement le cookie après `Register` ou `Log
 
 `POST /clothing/analyze` accepte une image JPEG, PNG, WebP, HEIC ou HEIF dans le champ multipart `image` (8 Mo maximum). La réponse utilise exclusivement les ENUM Prisma canoniques pour `category`, `color`, `material`, `season` et `style`. La clé Gemini reste exclusivement dans le backend.
 
+## Gestion des vêtements
+
+`PATCH /clothing/:id` permet de modifier le nom, la couleur, la matière, la saison et le style d'un vêtement. La catégorie attribuée lors de la création est volontairement immuable.
+
+`DELETE /clothing/:id` supprime aussi, par cascade, les références du vêtement dans les tenues enregistrées et dans la sélection actuellement portée.
+
 ## Build et production
 
 ```bash

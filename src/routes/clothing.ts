@@ -29,7 +29,6 @@ interface CreateClothingBody {
 
 interface UpdateClothingBody {
   name?: string;
-  category?: ClothingCategory;
   color?: ClothingColor;
   material?: ClothingMaterial;
   season?: ClothingSeason;
@@ -189,9 +188,9 @@ export async function clothingRoutes(app: FastifyInstance) {
         params: idParamSchema,
         body: {
           type: "object",
+          additionalProperties: false,
           properties: {
-            name: { type: "string", maxLength: 120 },
-            category: { type: "string", enum: CATEGORY_VALUES },
+            name: { type: "string", minLength: 1, maxLength: 120 },
             color: { type: "string", enum: COLOR_VALUES },
             material: { type: "string", enum: MATERIAL_VALUES },
             season: { type: "string", enum: SEASON_VALUES },
@@ -206,7 +205,7 @@ export async function clothingRoutes(app: FastifyInstance) {
     },
     async (request, reply) => {
       const id = BigInt(request.params.id);
-      const { name, category, color, material, season, style } = request.body;
+      const { name, color, material, season, style } = request.body;
 
       const existing = await prisma.clothingItem.findFirst({
         where: { id, userId: request.userId },
@@ -217,7 +216,7 @@ export async function clothingRoutes(app: FastifyInstance) {
 
       const item = await prisma.clothingItem.update({
         where: { id },
-        data: { name, category, color, material, season, style },
+        data: { name, color, material, season, style },
       });
 
       return reply.send(serializeClothingItem(item));
