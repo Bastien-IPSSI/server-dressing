@@ -1,0 +1,18 @@
+meta {
+  name: List
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/current-outfit-selection
+  body: none
+  auth: none
+}
+
+docs {
+  Récupère la sélection courante sur le mannequin de l'utilisateur authentifié.
+
+  ### Réponses
+  - `200` — la liste des entrées de sélection, avec le vêtement associé à chacune
+}
