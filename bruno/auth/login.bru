@@ -1,0 +1,41 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "test@example.com",
+    "password": "password123"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.token) {
+    bru.setEnvVar("token", res.body.token);
+  }
+}
+
+docs {
+  Connecte un utilisateur existant et renvoie un token JWT.
+
+  ### Body
+  - `email` (string, requis)
+  - `password` (string, requis)
+
+  ### Réponses
+  - `200` — `{ "user": { "id", "email", "username" }, "token": "..." }`
+  - `400` — email/mot de passe manquant
+  - `401` — identifiants invalides
+}

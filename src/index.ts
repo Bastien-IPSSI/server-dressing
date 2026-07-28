@@ -1,9 +1,23 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "./lib/prisma";
 import { authRoutes } from "./routes/auth";
 
 const app = Fastify({ logger: true });
+
+app.register(swagger, {
+  openapi: {
+    info: {
+      title: "server-dressing API",
+      version: "1.0.0",
+    },
+  },
+});
+app.register(swaggerUi, {
+  routePrefix: "/docs",
+});
 
 app.get("/health", async () => {
   return { status: "ok" };

@@ -1,0 +1,43 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "test@example.com",
+    "password": "password123",
+    "username": "monpseudo"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.token) {
+    bru.setEnvVar("token", res.body.token);
+  }
+}
+
+docs {
+  Crée un utilisateur et renvoie un token JWT.
+
+  ### Body
+  - `email` (string, requis)
+  - `password` (string, requis, min. 8 caractères)
+  - `username` (string, optionnel)
+
+  ### Réponses
+  - `201` — `{ "user": { "id", "email", "username" }, "token": "..." }`
+  - `400` — email/mot de passe manquant ou mot de passe trop court
+  - `409` — un compte existe déjà avec cet email
+}
