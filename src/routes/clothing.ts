@@ -1,18 +1,27 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { authenticate } from "../plugins/authenticate";
-import { ClothingCategory, Season, ClothingStyle } from "../generated/prisma/enums";
+import {
+  ClothingCategory,
+  ClothingColor,
+  ClothingMaterial,
+  ClothingSeason,
+  ClothingStyle,
+} from "../generated/prisma/enums";
 import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem";
 
 const CATEGORY_VALUES = Object.values(ClothingCategory);
-const SEASON_VALUES = Object.values(Season);
+const COLOR_VALUES = Object.values(ClothingColor);
+const MATERIAL_VALUES = Object.values(ClothingMaterial);
+const SEASON_VALUES = Object.values(ClothingSeason);
 const STYLE_VALUES = Object.values(ClothingStyle);
 
 interface CreateClothingBody {
   name: string;
   category: ClothingCategory;
-  color: string;
-  season: Season;
+  color: ClothingColor;
+  material: ClothingMaterial;
+  season: ClothingSeason;
   style: ClothingStyle;
   imageAvatarUrl: string;
   imageDressingUrl: string;
@@ -21,8 +30,9 @@ interface CreateClothingBody {
 interface UpdateClothingBody {
   name?: string;
   category?: ClothingCategory;
-  color?: string;
-  season?: Season;
+  color?: ClothingColor;
+  material?: ClothingMaterial;
+  season?: ClothingSeason;
   style?: ClothingStyle;
 }
 
@@ -36,6 +46,7 @@ export function serializeClothingItem(item: ClothingItemModel) {
     name: item.name,
     category: item.category,
     color: item.color,
+    material: item.material,
     season: item.season,
     style: item.style,
     imageAvatarUrl: item.imageAvatarUrl,
@@ -46,11 +57,24 @@ export function serializeClothingItem(item: ClothingItemModel) {
 
 export const clothingItemSchema = {
   type: "object",
+  required: [
+    "id",
+    "name",
+    "category",
+    "color",
+    "material",
+    "season",
+    "style",
+    "imageAvatarUrl",
+    "imageDressingUrl",
+    "createdAt",
+  ],
   properties: {
     id: { type: "string" },
     name: { type: "string" },
     category: { type: "string", enum: CATEGORY_VALUES },
-    color: { type: "string" },
+    color: { type: "string", enum: COLOR_VALUES },
+    material: { type: "string", enum: MATERIAL_VALUES },
     season: { type: "string", enum: SEASON_VALUES },
     style: { type: "string", enum: STYLE_VALUES },
     imageAvatarUrl: { type: "string" },
@@ -85,11 +109,21 @@ export async function clothingRoutes(app: FastifyInstance) {
         summary: "Ajouter un vêtement",
         body: {
           type: "object",
-          required: ["name", "category", "color", "season", "style", "imageAvatarUrl", "imageDressingUrl"],
+          required: [
+            "name",
+            "category",
+            "color",
+            "material",
+            "season",
+            "style",
+            "imageAvatarUrl",
+            "imageDressingUrl",
+          ],
           properties: {
             name: { type: "string", maxLength: 120 },
             category: { type: "string", enum: CATEGORY_VALUES },
-            color: { type: "string", maxLength: 50 },
+            color: { type: "string", enum: COLOR_VALUES },
+            material: { type: "string", enum: MATERIAL_VALUES },
             season: { type: "string", enum: SEASON_VALUES },
             style: { type: "string", enum: STYLE_VALUES },
             imageAvatarUrl: { type: "string" },
@@ -102,7 +136,7 @@ export async function clothingRoutes(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { name, category, color, season, style, imageAvatarUrl, imageDressingUrl } = request.body;
+      const { name, category, color, material, season, style, imageAvatarUrl, imageDressingUrl } = request.body;
 
       const item = await prisma.clothingItem.create({
         data: {
@@ -110,6 +144,7 @@ export async function clothingRoutes(app: FastifyInstance) {
           name,
           category,
           color,
+          material,
           season,
           style,
           imageAvatarUrl,
@@ -133,7 +168,8 @@ export async function clothingRoutes(app: FastifyInstance) {
           properties: {
             name: { type: "string", maxLength: 120 },
             category: { type: "string", enum: CATEGORY_VALUES },
-            color: { type: "string", maxLength: 50 },
+            color: { type: "string", enum: COLOR_VALUES },
+            material: { type: "string", enum: MATERIAL_VALUES },
             season: { type: "string", enum: SEASON_VALUES },
             style: { type: "string", enum: STYLE_VALUES },
           },
@@ -146,7 +182,7 @@ export async function clothingRoutes(app: FastifyInstance) {
     },
     async (request, reply) => {
       const id = BigInt(request.params.id);
-      const { name, category, color, season, style } = request.body;
+      const { name, category, color, material, season, style } = request.body;
 
       const existing = await prisma.clothingItem.findFirst({
         where: { id, userId: request.userId },
@@ -157,7 +193,7 @@ export async function clothingRoutes(app: FastifyInstance) {
 
       const item = await prisma.clothingItem.update({
         where: { id },
-        data: { name, category, color, season, style },
+        data: { name, category, color, material, season, style },
       });
 
       return reply.send(serializeClothingItem(item));

@@ -32,47 +32,105 @@ model User {
 enum ClothingCategory {
   TOP
   BOTTOM
+  DRESS
+  OUTERWEAR
   SHOES
+  ACCESSORY
+  UNDERWEAR
+  SPORTSWEAR
+  OTHER
+  UNKNOWN
 
   @@map("clothing_category")
 }
 
-enum Season {
+enum ClothingColor {
+  BLACK
+  WHITE
+  GRAY
+  BEIGE
+  BROWN
+  BLUE
+  NAVY_BLUE
+  GREEN
+  KHAKI
+  YELLOW
+  ORANGE
+  RED
+  PINK
+  PURPLE
+  MULTICOLOR
+  UNKNOWN
+
+  @@map("clothing_color")
+}
+
+enum ClothingMaterial {
+  COTTON
+  LINEN
+  WOOL
+  CASHMERE
+  SILK
+  LEATHER
+  SUEDE
+  DENIM
+  POLYESTER
+  NYLON
+  VISCOSE
+  ACRYLIC
+  ELASTANE
+  SYNTHETIC
+  MIXED
+  UNKNOWN
+
+  @@map("clothing_material")
+}
+
+enum ClothingSeason {
   SPRING
-  AUTUMN
   SUMMER
+  AUTUMN
   WINTER
   SPRING_SUMMER
   AUTUMN_WINTER
-  ALL
+  ALL_SEASONS
+  UNKNOWN
 
   @@map("season")
 }
 
 enum ClothingStyle {
-  CASUAL // Décontracté
-  SMART_CASUAL // Chic décontracté
-  FORMAL // Habillé / Classe
-  STREETWEAR // Style urbain
-  SPORTY // Sportif
-  CLASSIC // Classique
+  CASUAL
+  SMART_CASUAL
+  FORMAL
+  BUSINESS
+  STREETWEAR
+  SPORT
+  CLASSIC
+  BOHEMIAN
+  VINTAGE
+  MINIMALIST
+  PARTY
+  WORKWEAR
+  UNKNOWN
 
   @@map("clothing_style")
 }
 
 model ClothingItem {
-  id                 BigInt           @id @default(autoincrement())
-  userId             BigInt           @map("user_id")
-  name               String           @db.VarChar(120)
-  category           ClothingCategory
-  color              String           @db.VarChar(50)
-  season             Season
-  style              ClothingStyle
-  imageAvatarUrl     String           @map("image_avatar_url")
-  imageDressingUrl   String           @map("image_dressing_url")
-  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  id               BigInt           @id @default(autoincrement())
+  userId           BigInt           @map("user_id")
+  name             String           @db.VarChar(120)
+  category         ClothingCategory
+  color            ClothingColor
+  material         ClothingMaterial @default(UNKNOWN)
+  season           ClothingSeason
+  style            ClothingStyle
+  imageAvatarUrl   String           @map("image_avatar_url")
+  imageDressingUrl String           @map("image_dressing_url")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   outfitItems OutfitItem[]
 
   @@index([userId], map: "idx_clothing_items_user_id")
@@ -94,9 +152,9 @@ model Outfit {
 }
 
 model OutfitItem {
-  id               BigInt @id @default(autoincrement())
-  outfitId         BigInt @map("outfit_id")
-  clothingItemId   BigInt @map("clothing_item_id")
+  id             BigInt @id @default(autoincrement())
+  outfitId       BigInt @map("outfit_id")
+  clothingItemId BigInt @map("clothing_item_id")
 
   outfit       Outfit       @relation(fields: [outfitId], references: [id], onDelete: Cascade)
   clothingItem ClothingItem @relation(fields: [clothingItemId], references: [id], onDelete: Cascade)

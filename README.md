@@ -42,6 +42,10 @@ npm run dev
 
 La clé Gemini reste exclusivement dans le backend. La matière vaut `UNKNOWN` lorsqu'elle ne peut pas être déterminée de manière raisonnable depuis la photo.
 
+Les mêmes ENUM Prisma sont utilisés par l'analyse Gemini et par le CRUD des vêtements. Ils constituent la source de vérité pour `category`, `color`, `material`, `season` et `style`, ce qui évite les variantes de casse ou de libellé en base.
+
+La migration `20260728130000_unify_clothing_attributes` conserve les anciennes catégories, saisons et styles. Lors de la conversion de l'ancienne colonne libre `color`, toute valeur non reconnue est transformée en `UNKNOWN` plutôt que de faire échouer la migration.
+
 ## Build & production
 
 ```bash
