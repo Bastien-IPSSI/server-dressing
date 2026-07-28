@@ -1,0 +1,22 @@
+meta {
+  name: Get
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/current-outfit-selection
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg1MjI1Mjc5LCJleHAiOjE3ODU4MzAwNzl9.FtbMUJkZWAYSMEBKkM7czewpW0KQQ1_a3yov5niN2X8
+}
+
+docs {
+  Récupère la sélection courante de vêtements sur le mannequin de l'utilisateur authentifié (un vêtement au plus par catégorie).
+
+  ### Réponses
+  - `200` — la sélection courante (tableau, un élément par catégorie sélectionnée)
+}

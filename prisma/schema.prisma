@@ -23,9 +23,10 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
-  clothingItems ClothingItem[]
-  outfits       Outfit[]
-  notifications Notification[]
+  clothingItems           ClothingItem[]
+  outfits                 Outfit[]
+  notifications           Notification[]
+  currentOutfitSelections CurrentOutfitSelection[]
 
   @@map("users")
 }
@@ -73,8 +74,9 @@ model ClothingItem {
   imageDressingUrl   String           @map("image_dressing_url")
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  outfitItems OutfitItem[]
+  user                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitItems             OutfitItem[]
+  currentOutfitSelections CurrentOutfitSelection[]
 
   @@index([userId], map: "idx_clothing_items_user_id")
   @@map("clothing_items")
@@ -106,6 +108,22 @@ model OutfitItem {
   @@index([outfitId], map: "idx_outfit_items_outfit_id")
   @@index([clothingItemId], map: "idx_outfit_items_clothing_item_id")
   @@map("outfit_items")
+}
+
+model CurrentOutfitSelection {
+  id             BigInt           @id @default(autoincrement())
+  userId         BigInt           @map("user_id")
+  clothingItemId BigInt           @map("clothing_item_id")
+  category       ClothingCategory
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clothingItem ClothingItem @relation(fields: [clothingItemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category], map: "uq_current_outfit_selection_user_category")
+  @@index([userId], map: "idx_current_outfit_selection_user_id")
+  @@index([clothingItemId], map: "idx_current_outfit_selection_clothing_item_id")
+  @@map("current_outfit_selection")
 }
 
 model Notification {
