@@ -1,0 +1,15 @@
+meta {
+  name: Session
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/auth/get-session
+  body: none
+  auth: none
+}
+
+docs {
+  Retourne la session Better Auth portée par le cookie jar Bruno.
+}

@@ -12,7 +12,7 @@ These instructions apply to the entire `server-dressing` repository. This reposi
 - API documentation: `@fastify/swagger` and `@fastify/swagger-ui`
 - Database: PostgreSQL hosted by Supabase
 - ORM: Prisma 7 with the `@prisma/adapter-pg` driver adapter
-- Authentication: JWT tokens and passwords hashed with `bcryptjs`
+- Authentication: Better Auth sessions with the Prisma adapter and Expo plugin
 - Package manager: npm; `package-lock.json` is the source of truth
 - Local API collection: Bruno files under `bruno/`
 
@@ -61,7 +61,7 @@ The current `npm test` script is only a failing placeholder; do not report it as
 - Add complete Fastify JSON schemas for request bodies, parameters, query strings, successful responses, and expected error responses. These schemas are also the OpenAPI contract exposed at `/docs`.
 - Return explicit HTTP status codes and stable JSON shapes. Keep end-user API messages in French unless the feature requirements specify another language.
 - Keep route handlers concise. Extract reusable authentication, validation, serialization, or domain logic when it is shared or makes a handler difficult to read.
-- Log through Fastify's logger. Never use logs to expose passwords, JWTs, database credentials, authorization headers, or other secrets.
+- Log through Fastify's logger. Never use logs to expose passwords, session cookies, database credentials, authorization headers, or other secrets.
 
 ## API and data rules
 
@@ -75,11 +75,10 @@ The current `npm test` script is only a failing placeholder; do not report it as
 
 ## Authentication and security
 
-- `JWT_SECRET` is mandatory. Never add a hard-coded secret or an insecure fallback.
-- Passwords must only be stored as bcrypt hashes. Never persist or return plaintext passwords.
-- Read the user ID from the verified JWT subject for protected routes; never trust a client-provided `userId` as proof of ownership.
-- Validate JWT algorithms and expiration when adding token verification middleware.
-- Do not commit `.env`, Supabase credentials, JWT secrets, tokens, or real user data. Add only safe placeholders to `.env.example` when introducing a new variable.
+- `BETTER_AUTH_SECRET` is mandatory and must contain at least 32 high-entropy characters. Never add a hard-coded secret or an insecure fallback.
+- Password credentials, provider accounts, sessions, and verification values are owned by Better Auth. Never persist or return plaintext passwords.
+- Read the user ID from the verified Better Auth session for protected routes; never trust a client-provided `userId` as proof of ownership.
+- Do not commit `.env`, Supabase credentials, Better Auth secrets, session cookies, or real user data. Add only safe placeholders to `.env.example` when introducing a new variable.
 - Keep error responses useful to clients without returning stack traces, SQL details, connection strings, or secret-bearing upstream errors.
 
 ## Prisma and migrations

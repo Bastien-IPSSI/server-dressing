@@ -7,15 +7,11 @@ meta {
 post {
   url: {{baseUrl}}/clothing
   body: json
-  auth: bearer
+  auth: none
 }
 
 headers {
   Content-Type: application/json
-}
-
-auth:bearer {
-  token: {{token}}
 }
 
 body:json {

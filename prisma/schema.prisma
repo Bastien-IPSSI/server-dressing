@@ -4,8 +4,10 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
 }
 
 datasource db {
@@ -13,22 +15,73 @@ datasource db {
 }
 
 model User {
-  id           BigInt   @id @default(autoincrement())
-  email        String   @unique @db.VarChar(255)
-  passwordHash String?  @map("password_hash") @db.VarChar(255)
-  googleId     String?  @unique @map("google_id") @db.VarChar(255)
-  username     String?  @db.VarChar(50)
-  avatarUrl    String?  @map("avatar_url")
-  bio          String?
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id            String   @id @db.VarChar(255)
+  name          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(255)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String?
+  bio           String?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  sessions                Session[]
+  accounts                Account[]
   clothingItems           ClothingItem[]
   outfits                 Outfit[]
   notifications           Notification[]
   currentOutfitSelections CurrentOutfitSelection[]
 
   @@map("users")
+}
+
+model Session {
+  id        String   @id @db.VarChar(255)
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  token     String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  ipAddress String?  @map("ip_address") @db.VarChar(255)
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id") @db.VarChar(255)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_sessions_user_id")
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @db.VarChar(255)
+  accountId             String    @map("account_id") @db.VarChar(255)
+  providerId            String    @map("provider_id") @db.VarChar(255)
+  userId                String    @map("user_id") @db.VarChar(255)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at") @db.Timestamptz(6)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at") @db.Timestamptz(6)
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId], map: "uq_accounts_provider_account")
+  @@index([userId], map: "idx_accounts_user_id")
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @db.VarChar(255)
+  identifier String   @db.VarChar(255)
+  value      String
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([identifier], map: "idx_verifications_identifier")
+  @@map("verifications")
 }
 
 enum ClothingCategory {
@@ -121,7 +174,7 @@ enum ClothingStyle {
 
 model ClothingItem {
   id               BigInt           @id @default(autoincrement())
-  userId           BigInt           @map("user_id")
+  userId           String           @map("user_id") @db.VarChar(255)
   name             String           @db.VarChar(120)
   category         ClothingCategory
   color            ClothingColor
@@ -142,7 +195,7 @@ model ClothingItem {
 
 model Outfit {
   id         BigInt   @id @default(autoincrement())
-  userId     BigInt   @map("user_id")
+  userId     String   @map("user_id") @db.VarChar(255)
   name       String?  @db.VarChar(120)
   isFavorite Boolean  @default(false) @map("is_favorite")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -170,7 +223,7 @@ model OutfitItem {
 
 model CurrentOutfitSelection {
   id             BigInt           @id @default(autoincrement())
-  userId         BigInt           @map("user_id")
+  userId         String           @map("user_id") @db.VarChar(255)
   clothingItemId BigInt           @map("clothing_item_id")
   category       ClothingCategory
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -186,7 +239,7 @@ model CurrentOutfitSelection {
 
 model Notification {
   id        BigInt   @id @default(autoincrement())
-  userId    BigInt   @map("user_id")
+  userId    String   @map("user_id") @db.VarChar(255)
   type      String   @db.VarChar(50)
   title     String   @db.VarChar(150)
   content   String?

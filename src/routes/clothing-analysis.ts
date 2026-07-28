@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { clothingAnalysisJsonSchema } from "../domain/clothing-analysis";
-import { analyzeClothingImage, GeminiAnalysisError } from "../services/gemini-clothing-analysis";
+import { clothingAnalysisJsonSchema } from "../domain/clothing-analysis.js";
+import { analyzeClothingImage, GeminiAnalysisError } from "../services/gemini-clothing-analysis.js";
 
 const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
 

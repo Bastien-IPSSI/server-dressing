@@ -7,15 +7,11 @@ meta {
 delete {
   url: {{baseUrl}}/outfits/:id
   body: none
-  auth: bearer
+  auth: none
 }
 
 params:path {
   id: 1
-}
-
-auth:bearer {
-  token: {{token}}
 }
 
 docs {

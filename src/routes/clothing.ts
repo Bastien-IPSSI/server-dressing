@@ -1,14 +1,14 @@
 import { FastifyInstance } from "fastify";
-import { prisma } from "../lib/prisma";
-import { authenticate } from "../plugins/authenticate";
+import { prisma } from "../lib/prisma.js";
+import { authenticate } from "../plugins/authenticate.js";
 import {
   ClothingCategory,
   ClothingColor,
   ClothingMaterial,
   ClothingSeason,
   ClothingStyle,
-} from "../generated/prisma/enums";
-import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem";
+} from "../generated/prisma/enums.js";
+import type { ClothingItemModel } from "../generated/prisma/models/ClothingItem.js";
 
 const CATEGORY_VALUES = Object.values(ClothingCategory);
 const COLOR_VALUES = Object.values(ClothingColor);
