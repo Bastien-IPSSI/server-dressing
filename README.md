@@ -17,6 +17,7 @@ npm run dev
 La configuration minimale de `.env` comprend :
 
 - les variables `SUPABASE_DB_*` ;
+- `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` et le bucket public `SUPABASE_STORAGE_BUCKET` pour les photos des vêtements ;
 - `BETTER_AUTH_SECRET`, secret aléatoire d'au moins 32 caractères ;
 - `BETTER_AUTH_URL`, URL publique du serveur, par exemple `http://localhost:3000` ;
 - `APP_SCHEME=mogora`, identique au scheme Expo ;
@@ -53,9 +54,11 @@ La collection Bruno conserve automatiquement le cookie après `Register` ou `Log
 
 ## Gestion des vêtements
 
+`POST /clothing/with-image` accepte les métadonnées et une photo dans le champ multipart `image` (8 Mo maximum). Le backend authentifié charge la photo dans Supabase Storage sous `clothing/<utilisateur>/<uuid>.<extension>` puis enregistre son URL publique dans `imageAvatarUrl` et `imageDressingUrl`. Le bucket configuré doit déjà exister et être public ; la clé `service_role` ne doit jamais être placée dans l'application Expo.
+
 `PATCH /clothing/:id` permet de modifier le nom, la couleur, la matière, la saison et le style d'un vêtement. La catégorie attribuée lors de la création est volontairement immuable.
 
-`DELETE /clothing/:id` supprime aussi, par cascade, les références du vêtement dans les tenues enregistrées et dans la sélection actuellement portée.
+`DELETE /clothing/:id` supprime aussi, par cascade, les références du vêtement dans les tenues enregistrées et dans la sélection actuellement portée. Lorsqu'elle appartient au dossier Storage de l'utilisateur, sa photo est également supprimée.
 
 ## Build et production
 
