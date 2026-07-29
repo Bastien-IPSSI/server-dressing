@@ -1,0 +1,29 @@
+meta {
+  name: Create with image
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/clothing/with-image
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  name: T-shirt blanc
+  category: TOP
+  color: WHITE
+  material: COTTON
+  season: SUMMER
+  style: CASUAL
+  ~image: @file(../sample-clothing.webp)
+}
+
+docs {
+  Charge la photo dans Supabase Storage puis crée le vêtement pour l'utilisateur authentifié.
+
+  Activez le champ `image` puis sélectionnez une image locale dans Bruno avant d'envoyer la requête.
+
+  Le bucket `SUPABASE_STORAGE_BUCKET` doit exister, être public et le backend doit disposer de `SUPABASE_SERVICE_ROLE_KEY`.
+}
